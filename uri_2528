@@ -1,0 +1,93 @@
+/*Your vacations are finally about to begin! To enjoy your deserved rest, you decided to travel from Curytyba to Riacho de Fevereiro, a great touristic city in the country.
+
+There are N cities in the country, numbered from 1 to N. Curytyba is the city number C, and Riacho de Fevereiro is the city number R. Also, there are M routes. Each route connects two cities A and B, can be used to go from A to B or vice-versa, and takes exactly one hour to be transversed.
+
+Everything is fine except one small detail: the mayor of the city Estadunido (city E), mr. Donaldo Trumpe, with a polemic decree, prohibited every citizen from Curytyba to enter his city! Hence, you must go to Riacho de Fevereiro avoiding passing by Estadunido.
+
+Your task is to determine the minimum time needed, in hours, to go from Curytyba to Riacho de Fevereiro avoiding passing by Estadunido.
+
+Input
+The input contains several test cases. The first line of each test case contains two integers N and M (3 ≤ N ≤ 1000, 1 ≤ M ≤ N(N-1)/2), the number of cities and routes, respectively. Each of the next M lines describe a route. Each line contains two integers A and B (1 ≤ A, B ≤ N, A≠B), indicating a route between cities A and B. The last line contains three integers C, R and E (1 ≤ C, R, E ≤ N,C≠R≠E), indicating Curytyba, Riacho de Fevereiro and Estatunido, respectively.
+
+No route appears more than once in the input. It is guaranteed that it is possible to travel from city C to city R without going to city E using the routes given in the input.
+
+The input ends with end-of-file (EOF).
+
+Output
+For each test case, print a line containing the minimum time needed, in hours, to go from city C to city R without passing by city E.
+*/
+
+#include<iostream>
+#include <bits/stdc++.h>
+using namespace std;
+typedef vector<int>vi;
+vi G[1000];
+void zerar(int qtd)
+{
+  for(int i=0 ; i<1000;i++)
+    {
+      G[i].clear();
+    }
+}
+int bfs(int inic, int final, int qtd)
+{
+  int const inf = 999999999;
+  int *distancia = new int[qtd+2];
+  for(int i=1;i<=qtd;i++)
+    {
+      distancia[i] = inf;
+    }
+  queue<int> fila;
+  fila.push(inic);
+  distancia[inic] = 0;
+  while(!fila.empty())
+    {
+      int vertice = fila.front();
+      fila.pop();
+      int adj;
+      for(int i=0; i < G[vertice].size(); i++) // percorrendo a fila de adjacencia do vertice
+        {
+          adj = G[vertice][i];
+          if(distancia[adj] > distancia[vertice]+ 1)
+            {
+              distancia[adj] = distancia[vertice]+1;
+              fila.push(adj);
+            }
+        }
+    }
+
+
+  return distancia[final];
+}
+int main()
+{
+  int m,n;
+  while(cin>>m){
+      cin>>n;
+      vector<::pair<int, int>>aux; // guarda todas as arestas
+      zerar(m);
+      int a,b;
+      for(int i=1;i<=n;i++)
+        {
+          cin>>a>>b;
+          aux.push_back(::make_pair(a,b));
+        }
+      int c,r,e;
+      cin>>c>>r>>e;
+      for(int i=0; i<aux.size();i++)
+        {
+          int num1, num2;
+          num1 = aux[i].first;
+          num2 = aux[i].second;
+          if(num1!=e && num2!=e)
+            {
+              G[num1].push_back(num2);
+              G[num2].push_back(num1);
+            }
+        }
+
+      //cout<<c<<r<<m<<endl;
+        cout<<bfs(c,r,m)<<endl;
+
+    }
+}
